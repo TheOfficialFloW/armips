@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <tinyformat.h>
+#include <fmt/format.h>
 
 class CAssemblerCommand;
 class Expression;
@@ -72,7 +72,7 @@ public:
 	template <typename... Args>
 	void printError(const Token& token, const wchar_t* text, const Args&... args)
 	{
-		printError(token, tfm::format(text,args...));
+		printError(token, fmt::format(text,args...));
 	}
 
 	bool hasError() { return error; }

@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#include <tinyformat.h>
+#include <fmt/format.h>
 
 //
 // Tokenizer
@@ -611,7 +611,7 @@ Token FileTokenizer::loadToken()
 
 	if (pos == linePos)
 	{
-		std::wstring text = tfm::format(L"Invalid input '%c'",currentLine[pos]);
+		std::wstring text = fmt::format(L"Invalid input '{:c}'",currentLine[pos]);
 		createToken(TokenType::Invalid,1,text);
 		return std::move(token);
 	}

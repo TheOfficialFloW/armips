@@ -7,6 +7,8 @@
 #include "Core/Misc.h"
 #include "Core/SymbolData.h"
 
+#include <sstream>
+
 CInvalidArchitecture InvalidArchitecture;
 
 const ExpressionFunctionMap &CArchitecture::getExpressionFunctions()

@@ -5,6 +5,12 @@ option(ARMIPS_PRECOMPILE_HEADERS "Use precompiled headers" OFF)
 option(ARMIPS_REGEXP "Enable regexp expression functions" ON)
 option(ARMIPS_USE_STD_FILESYSTEM "Use std::filesystem instead of third party implementation" OFF)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
+
+add_subdirectory(ext/fmt)
+
 macro(check_compiler VARIABLE NAME)
 	if (${CMAKE_CXX_COMPILER_ID} MATCHES ${NAME})
 		set(${VARIABLE} TRUE)
@@ -18,11 +24,6 @@ check_compiler(GCC "GNU")
 
 # Helper function to set common parameters for a target
 function(init_target TARGET_NAME)
-	set_target_properties(${TARGET_NAME} PROPERTIES
-		CXX_STANDARD 17
-		CXX_STANDARD_REQUIRED TRUE
-		CXX_EXTENSIONS FALSE)
-
 	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 	if (GCC OR CLANG)
@@ -62,14 +63,9 @@ function(armips_target_sources TARGET SCOPE)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ARGN})
 endfunction()
 
-# tinyformat
-add_library(tinyformat INTERFACE)
-target_include_directories(tinyformat INTERFACE ext/tinyformat)
-
 # libarmips
 add_library(armips STATIC)
 init_target(armips)
-target_link_libraries(armips PUBLIC tinyformat)
 
 if (ARMIPS_USE_STD_FILESYSTEM)
 	target_compile_definitions(armips PUBLIC ARMIPS_USE_STD_FILESYSTEM)
@@ -77,6 +73,8 @@ else()
 	add_subdirectory(ext/filesystem)
 	target_link_libraries(armips PUBLIC ghc_filesystem)
 endif()
+
+target_link_libraries(armips PUBLIC fmt::fmt)
 
 if (WIN32)
 	target_link_libraries(armips PUBLIC shlwapi)
@@ -191,7 +189,7 @@ armips_target_sources(armips PRIVATE
 if (ARMIPS_PRECOMPILE_HEADERS)
 	target_precompile_headers(armips PRIVATE
 		[["Util/FileSystem.h"]]
-		<tinyformat.h>
+		<fmt/format.h>
 	)
 	set_source_files_properties(Util/FileSystem.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
