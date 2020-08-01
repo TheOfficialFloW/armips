@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <unordered_map>
+
 class TextFile;
 
 enum class TokenType
@@ -167,14 +169,8 @@ private:
 	TokenList tokens;
 	TokenizerPosition position;
 
-	struct Replacement
-	{
-		std::wstring identifier;
-		std::vector<Token> value;
-	};
-
 	Token invalidToken;
-	std::vector<Replacement> replacements;
+	std::unordered_map<std::wstring, std::vector<Token>>  replacements;
 	static std::vector<std::vector<Token>> equValues;
 };
 

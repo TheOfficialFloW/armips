@@ -31,10 +31,11 @@ bool Tokenizer::processElement(TokenList::iterator& it)
 		if ((*it).type == TokenType::Identifier)
 		{
 			const std::wstring stringValue = (*it).getStringValue();
-			for (const Replacement& replacement: replacements)
+
+			auto repIt = replacements.find(stringValue);
+			if (repIt != replacements.end())
 			{
 				// if the identifier matches, add all of its tokens
-				if (replacement.identifier == stringValue)
 				{
 					TokenList::iterator insertIt = it;
 					insertIt++;
@@ -42,8 +43,8 @@ bool Tokenizer::processElement(TokenList::iterator& it)
 					// replace old token with the new tokens
 					// replace the first token manually so that any iterators
 					// are still guaranteed to be valid
-					(*it) = replacement.value[0];
-					tokens.insert(insertIt,replacement.value.begin()+1, replacement.value.end());
+					(*it) = repIt->second[0];
+					tokens.insert(insertIt,repIt->second.begin()+1, repIt->second.end());
 
 					// If the value at this position didn't change, then just keep going.
 					// Otherwise we'd be stuck in an endless replace loop
@@ -152,8 +153,7 @@ std::vector<Token> Tokenizer::getTokens(TokenizerPosition start, TokenizerPositi
 
 void Tokenizer::registerReplacement(const std::wstring& identifier, std::vector<Token>& tokens)
 {
-	Replacement replacement { identifier, tokens };
-	replacements.push_back(replacement);
+	replacements.emplace(identifier, tokens);
 }
 
 void Tokenizer::registerReplacement(const std::wstring& identifier, const std::wstring& newValue)
@@ -167,11 +167,7 @@ void Tokenizer::registerReplacement(const std::wstring& identifier, const std::w
 	tok.setStringValue(lowerCase);
 	tok.setOriginalText(newValue);
 
-	Replacement replacement;
-	replacement.identifier = identifier;
-	replacement.value.push_back(tok);
-
-	replacements.push_back(replacement);
+	replacements.emplace(identifier, std::vector<Token>{tok});
 }
 
 void Tokenizer::addToken(Token token)
