@@ -128,6 +128,7 @@ add_library(armips STATIC
 	Util/Util.h
 )
 
+if(NOT VITA)
 add_executable(armips-bin
 	Main/main.cpp
 	Main/Tests.cpp
@@ -160,3 +161,4 @@ if(MINGW)
 	target_link_libraries(armips-bin -lstdc++)
 	target_link_libraries(armipstests -lstdc++)
 endif(MINGW)
+endif()

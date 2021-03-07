@@ -272,6 +272,7 @@ FILE* openFile(const std::wstring& fileName, OpenFileMode mode)
 	return nullptr;
 }
 
+#ifndef VITA
 std::wstring getCurrentDirectory()
 {
 #ifdef _WIN32
@@ -295,6 +296,7 @@ void changeDirectory(const std::wstring& dir)
 	chdir(utf8.c_str());
 #endif
 }
+#endif
 
 std::wstring toWLowercase(const std::string& str)
 {
